@@ -1,7 +1,7 @@
-name: 每日自动打开MJTD（带浏览器缓存）
+name: 每日5点自动打开MJTD
 on:
   schedule:
-    - cron: '0 4 * * *'   # 北京时间 12:00
+    - cron: '0 21 * * *'   # UTC 21:00 = 北京时间 05:00
   workflow_dispatch:
 
 jobs:
@@ -10,30 +10,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Playwright 浏览器
+      - name: 缓存 Playwright 浏览器
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-pw-chromium-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pw-chromium-
+          key: ${{ runner.os }}-pw-chromium
 
       - name: 设置 Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 安装 Python 依赖
+      - name: 安装依赖
         run: |
-          python -m pip install --upgrade pip
           pip install playwright
+          playwright install chromium --with-deps
 
-      - name: 安装 Chromium（缓存命中则跳过）
-        run: |
-          python -m playwright install chromium
-          # 只装 chromium，不装 firefox/webkit，省空间和时间
-
-      - name: 运行脚本（停留5秒）
+      - name: 运行脚本
         env:
           MJTD_COOKIES: ${{ secrets.MJTD_COOKIES }}
         run: python browser.py
