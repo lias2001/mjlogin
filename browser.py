@@ -5,7 +5,7 @@ import time
 
 def run():
     with sync_playwright() as p:
-        # 无头启动浏览器
+        # 启动无头浏览器
         browser = p.chromium.launch(
             headless=True,
             args=["--no-sandbox", "--disable-dev-shm-usage"]
@@ -13,7 +13,7 @@ def run():
 
         context = browser.new_context()
 
-        # 从 GitHub Secrets 加载登录Cookie
+        # 加载登录Cookie
         cookie_str = os.environ.get("MJTD_COOKIES")
         if cookie_str:
             cookies = json.loads(cookie_str)
@@ -25,11 +25,17 @@ def run():
         page.goto("https://bbs.mjtd.com/")
         print("✅ 页面已打开")
 
-        # ======================
-        # 这里停留 5 秒
-        # ======================
-        print("⏳ 等待5秒后关闭...")
-        time.sleep(5)
+        # 停留15秒
+        print("⏳ 停留 15 秒...")
+        time.sleep(15)
+
+        # 刷新页面
+        print("🔄 刷新页面...")
+        page.reload()
+
+        # 刷新后停留2秒
+        print("⏳ 刷新后停留 2 秒...")
+        time.sleep(2)
 
         # 关闭
         context.close()
