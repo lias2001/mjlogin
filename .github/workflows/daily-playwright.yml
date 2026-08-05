@@ -1,9 +1,7 @@
-name: 每日5点打开MJTD（全缓存）
+name: 每4小时打开MJTD（全缓存）
 on:
   schedule:
-    - cron: '0 21 * * *'  # UTC 21:00 = 北京时间 05:00
-    - cron: '00 10 * * *'
-    - cron: '00 00 * * *'
+    - cron: '0 */4 * * *'  
   workflow_dispatch:
 
 jobs:
